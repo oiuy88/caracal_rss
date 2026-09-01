@@ -1,0 +1,36 @@
+# CIRCABC folders to monitor
+
+folders:
+
+  # Your supplied CIRCABC library/folder
+  - id: "84998de9-01ff-4434-b566-85367d2fae5b"
+    name: "CIRCABC monitored library"
+    recursive: true
+
+  # Add additional folders here:
+  #
+  # - id: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  #   name: "Another folder"
+  #   recursive: true
+
+# Number of pages to inspect for each folder.
+# CIRCABC commonly exposes pagination using p/n parameters.
+pages_per_folder: 20
+
+# Number of entries in the generated RSS feed.
+max_feed_items: 200
+
+# HTTP settings
+request_timeout: 30
+request_retries: 3
+
+# Delay between requests, in seconds.
+request_delay: 0.5
+
+# GitHub Pages URL.
+#
+# CHANGE THESE TWO VALUES.
+feed_url: "https://YOUR-USERNAME.github.io/YOUR-REPOSITORY/feed.xml"
+
+# Public CIRCABC base URL.
+circabc_base_url: "https://circabc.europa.eu"
