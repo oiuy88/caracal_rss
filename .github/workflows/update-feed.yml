@@ -1,6 +1,7 @@
 name: Monitor CIRCABC
 
 on:
+
   schedule:
     # Every hour.
     - cron: "23 * * * *"
@@ -18,25 +19,25 @@ jobs:
 
     steps:
 
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.x"
-          cache: pip
+          cache: "pip"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Crawl CIRCABC
+      - name: Crawl CIRCABC and generate RSS
         run: |
           python scripts/circabc_rss.py
 
-      - name: Validate RSS
+      - name: Validate RSS XML
         run: |
           python - <<'PY'
           import xml.etree.ElementTree as ET
@@ -46,7 +47,7 @@ jobs:
           print("RSS XML is valid.")
           PY
 
-      - name: Commit changes
+      - name: Commit updated feed and state
         run: |
 
           git config user.name \
@@ -58,6 +59,11 @@ jobs:
           git add \
             docs/feed.xml \
             state/state.json
+
+          # Include diagnostics if they exist.
+          if [ -f state/last_response.html ]; then
+            git add state/last_response.html
+          fi
 
           if git diff --cached --quiet; then
             echo "No changes detected."
