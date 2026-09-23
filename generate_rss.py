@@ -16,16 +16,33 @@ def build_rss():
         print(f"Failed to fetch data: {response.status_code}")
         return
     
-    data = response.json()
+    raw_data = response.json()
     
+    # 1. Safely locate the list of documents inside the JSON response
+    documents = []
+    if isinstance(raw_data, dict):
+        if 'data' in raw_data:
+            documents = raw_data['data']
+        elif 'list' in raw_data and 'entries' in raw_data['list']:
+            # Alfresco generic API structure
+            documents = [i.get('entry', i) for i in raw_data['list']['entries']]
+        else:
+            print(f"Error: Unexpected JSON wrapper. Found keys: {list(raw_data.keys())}")
+            return
+    elif isinstance(raw_data, list):
+        documents = raw_data
+    else:
+        print("Error: Unknown data format returned by CIRCABC")
+        return
+
     # Initialize feed
     fg = FeedGenerator()
     fg.title('CIRCABC Folder Updates')
     fg.link(href=FOLDER_URL, rel='alternate')
     fg.description('Latest document changes in the CIRCABC repository')
     
-    # Build entries
-    for item in data:
+    # 2. Build entries from the located documents array
+    for item in documents:
         fe = fg.add_entry()
         
         title = item.get('name', 'Unknown Document')
