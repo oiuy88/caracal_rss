@@ -87,7 +87,7 @@ def build_rss():
         fe.title(title)
         
         node_id = item.get('id', '')
-        download_link = f"https://circabc.europa.eu/ui/group/a0b483a2-4c05-4058-addf-2a4de71b9a98/library/{node_id}"
+        download_link = f"https://circabc.europa.eu/ui/group/a0b483a2-4c05-4058-addf-2a4de71b9a98/library/{node_id}/details"
         fe.link(href=download_link)
         fe.id(node_id)
         
