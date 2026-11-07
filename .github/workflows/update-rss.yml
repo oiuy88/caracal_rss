@@ -1,0 +1,37 @@
+name: Update CIRCABC RSS
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # Runs every 6 hours
+  workflow_dispatch: # Adds a button in GitHub to run manually
+
+# Required to allow the bot to commit the rss.xml file back to the repository
+permissions:
+  contents: write
+
+jobs:
+  update-feed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate RSS feed
+        run: python generate_rss.py
+
+      - name: Commit and push rss.xml
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan gh-pages
+          git add rss.xml
+          git commit -m "Automated RSS update" || exit 0
+          git push -f origin gh-pages
